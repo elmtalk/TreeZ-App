@@ -1,5 +1,5 @@
 /* TreeZ PWA Service Worker - cache-first app shell */
-const CACHE = "treez-pwa-v1";
+const CACHE = "treez-pwa-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
