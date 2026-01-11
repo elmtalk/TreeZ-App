@@ -1,0 +1,2177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TreeZ — Stem Strength &amp; Windfirmness Assessment (UK)</title>
+  <style>
+    :root {
+      --bg:#071b1a;
+      --card:#0f2b2a;
+      --accent:#2fa678;
+      --accent-soft:rgba(47,166,120,0.18);
+      --muted:#9fbfb0;
+      --paper:#e6efde;
+    }
+    * { box-sizing:border-box; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: var(--bg);
+      color: var(--paper);
+      margin:0;
+      padding:16px;
+    }
+    .wrap { max-width:1200px; margin:0 auto; }
+    header { display:flex; align-items:center; gap:14px; margin-bottom:10px; }
+    h1 { margin:0; font-size:21px; letter-spacing:0.04em; }
+    .tagline { font-size:12px; color:var(--muted); }
+    .logo-mark {
+      width:52px; height:52px; border-radius:50%;
+      background: radial-gradient(circle at 30% 20%,#7fffd4,#2fa678 40%,#021514 70%);
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 0 18px rgba(47,166,120,.6);
+    }
+    .logo-mark svg { width:34px; height:34px; }
+    .card {
+      background:var(--card);
+      padding:14px;
+      border-radius:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,.6);
+      margin-top:10px;
+    }
+    .flex { display:flex; gap:14px; align-items:flex-start; }
+    @media (max-width:900px){
+      .flex { flex-direction:column; }
+      header { align-items:flex-start; }
+    }
+    .left { flex:1; min-width:0; }
+    .right { width:520px; max-width:100%; }
+    label { display:block; margin-top:6px; font-size:13px; color:var(--muted); }
+    .row { display:flex; gap:10px; }
+    .col { flex:1; }
+    input[type="number"] {
+      width:100%;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid rgba(47,166,120,0.2);
+      background:#072a2a;
+      color:var(--paper);
+      font-size:14px;
+    }
+    input[type="range"] {
+      -webkit-appearance:none;
+      width:100%;
+      height:26px;
+      border-radius:13px;
+      background:#052020;
+      outline:none;
+      padding:4px 0;
+      touch-action:pan-y;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance:none;
+      appearance:none;
+      width:22px; height:22px;
+      border-radius:50%;
+      background:var(--accent);
+      border:2px solid #02130f;
+      box-shadow:0 0 4px rgba(0,0,0,.6);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width:22px; height:22px;
+      border-radius:50%;
+      background:var(--accent);
+      border:2px solid #02130f;
+    }
+    select {
+      width:100%;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid rgba(47,166,120,0.2);
+      background:#072a2a;
+      color:var(--paper);
+      font-size:14px;
+    }
+    button {
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:transparent;
+      color:var(--paper);
+      font-size:13px;
+      cursor:pointer;
+    }
+    button.primary {
+      background:var(--accent);
+      border:none;
+      color:#042;
+      font-weight:600;
+    }
+    button:active { transform:translateY(1px); }
+    canvas#preview {
+      background:#021515;
+      border-radius:10px;
+      width:100%;
+      height:auto;
+      max-height:380px;
+      touch-action:none;
+    }
+    canvas#treePreview {
+      background:#021515;
+      border-radius:10px;
+      width:100%;
+      height:auto;
+      max-height:260px;
+      margin-top:8px;
+      touch-action:none;
+    }
+    table {
+      width:100%;
+      border-collapse:collapse;
+      margin-top:8px;
+      font-size:13px;
+    }
+    td,th {
+      padding:4px 6px;
+      border-bottom:1px dashed rgba(255,255,255,0.06);
+    }
+    th { text-align:left; color:var(--muted); font-weight:500; }
+    .small { font-size:12px; color:var(--muted); }
+    footer { margin-top:16px; font-size:11px; color:var(--muted); }
+    #lossSummary { margin-top:6px; font-size:13px; font-weight:600; }
+    details { margin-top:10px; }
+    details summary { cursor:pointer; font-size:13px; color:var(--muted); }
+    .opening-block {
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius:8px;
+      padding:6px;
+      margin-top:6px;
+    }
+    .hidden { display:none !important; }
+    .badge {
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:600;
+    }
+    .badge-pass {
+      background:#14532d;
+      color:#bbf7d0;
+    }
+    .badge-fail {
+      background:#7f1d1d;
+      color:#fecaca;
+    }
+    a.small-link {
+      color:#a5f3fc;
+      text-decoration:underline;
+    }
+  </style>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2fa678">
+  <link rel="icon" href="icon-192.png">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo-mark" title="TreeZ logo">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="24" r="12" fill="none" stroke="#02110c" stroke-width="2"/>
+          <circle cx="24" cy="24" r="8" fill="none" stroke="#02110c" stroke-width="2" stroke-dasharray="4 3"/>
+          <path d="M10 34 L18 26" stroke="#02110c" stroke-width="3" stroke-linecap="round"/>
+          <path d="M38 14 L30 22" stroke="#02110c" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>TreeZ — Structural Assessment (Stem + Wind)</h1>
+        <div class="tagline">
+          Model stem/cavity geometry, then compare <strong>stem strength</strong> vs <strong>anchorage windfirmness</strong> under static wind loads using UK wind presets.
+        </div>
+      </div>
+    </header>
+    <div class="card" style="margin-top:10px">
+      <p class="small" style="margin-top:8px">
+          Suggested workflow: 1) set stem D₁/D₂, 2) set cavity radii R₁/R₂, 3) offset cavity with X/Y, 4) add openings if present,
+          5) read directional strength and wall thickness, 6) enable material strength for Mᵧ,
+          7) use Wind &amp; setting to compare stem strength vs anchorage windfirmness under a chosen wind scenario, 8) export PNG for reports.
+        </p>
+    </div>
+
+
+    <div class="card flex">
+      <!-- LEFT: STEM / CAVITY -->
+      <div class="left">
+        <h3 style="margin:0 0 6px 0;font-size:16px">Stem &amp; cavity (elliptical)</h3>
+        <p class="small">
+          All dimensions in millimetres. D₁ runs West–East (W–E), D₂ runs South–North (S–N) at the basal cross-section.
+          Cavity is an ellipse defined by radii R₁ (E–W) and R₂ (N–S), with optional offset and openings.
+        </p>
+
+        <!-- STEM CONTROLS -->
+        <label>Stem diameters</label>
+        <div class="row">
+          <div class="col">
+            <span class="small">D₁ (W–E basal diameter, mm)</span>
+            <input id="stemD1_range" type="range" min="150" max="5000" value="1000" step="10" />
+            <input id="stemD1" type="number" value="1000" />
+          </div>
+          <div class="col">
+            <span class="small">D₂ (S–N basal diameter, mm)</span>
+            <input id="stemD2_range" type="range" min="150" max="5000" value="1000" step="10" />
+            <input id="stemD2" type="number" value="1000" />
+          </div>
+        </div>
+
+        <!-- CAVITY RADII -->
+        <label style="margin-top:8px">Cavity radii (internal hollow)</label>
+        <div class="row">
+          <div class="col">
+            <span class="small">R₁ (horizontal radius, mm)</span>
+            <input id="cavR1_range" type="range" min="0" max="2500" value="250" step="10" />
+            <input id="cavR1" type="number" value="250" />
+          </div>
+          <div class="col">
+            <span class="small">R₂ (vertical radius, mm)</span>
+            <input id="cavR2_range" type="range" min="0" max="2500" value="250" step="10" />
+            <input id="cavR2" type="number" value="250" />
+          </div>
+        </div>
+
+        <!-- ADVANCED GEOMETRY -->
+        <details>
+          <summary>Advanced cavity geometry (offset &amp; openings)</summary>
+
+          <label style="margin-top:6px">Cavity centre offset (mm)</label>
+          <div class="row">
+            <div class="col">
+              <span class="small">X offset (−W / +E)</span>
+              <input id="offX_range" type="range" min="-500" max="500" value="0" step="10" />
+              <input id="offX" type="number" value="0" />
+            </div>
+            <div class="col">
+              <span class="small">Y offset (−S / +N)</span>
+              <input id="offY_range" type="range" min="-500" max="500" value="0" step="10" />
+              <input id="offY" type="number" value="0" />
+            </div>
+          </div>
+
+          <label style="margin-top:8px">Openings to cavity</label>
+          <div class="row">
+            <div class="col">
+              <span class="small">Number of openings</span>
+              <select id="openingsCount">
+                <option value="0">0 — closed cavity</option>
+                <option value="1">1 opening</option>
+                <option value="2">2 openings</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="opening1" class="opening-block hidden">
+            <span class="small"><strong>Opening 1</strong></span>
+            <div class="row">
+              <div class="col">
+                <span class="small">Side</span>
+                <select id="open1_side">
+                  <option value="left">Left (W)</option>
+                  <option value="right">Right (E)</option>
+                  <option value="top">Top (N)</option>
+                  <option value="bottom">Bottom (S)</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <span class="small">Depth (mm)</span>
+                <input id="open1_depth_range" type="range" min="0" max="2500" value="150" step="10" />
+                <input id="open1_depth" type="number" value="150" />
+              </div>
+              <div class="col">
+                <span class="small">Half-width (mm)</span>
+                <input id="open1_half_range" type="range" min="0" max="2500" value="150" step="10" />
+                <input id="open1_half" type="number" value="150" />
+              </div>
+            </div>
+          </div>
+
+          <div id="opening2" class="opening-block hidden">
+            <span class="small"><strong>Opening 2</strong></span>
+            <div class="row">
+              <div class="col">
+                <span class="small">Side</span>
+                <select id="open2_side">
+                  <option value="left">Left (W)</option>
+                  <option value="right">Right (E)</option>
+                  <option value="top">Top (N)</option>
+                  <option value="bottom">Bottom (S)</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <span class="small">Depth (mm)</span>
+                <input id="open2_depth_range" type="range" min="0" max="2500" value="150" step="10" />
+                <input id="open2_depth" type="number" value="150" />
+              </div>
+              <div class="col">
+                <span class="small">Half-width (mm)</span>
+                <input id="open2_half_range" type="range" min="0" max="2500" value="150" step="10" />
+                <input id="open2_half" type="number" value="150" />
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- MATERIAL STRENGTH MODE -->
+        <label style="margin-top:8px">
+          Material strength (optional)
+        </label>
+        <div class="row">
+          <div class="col" style="display:flex;align-items:center;gap:6px;">
+            <input id="matMode" type="checkbox" style="width:auto;" checked />
+            <span class="small">Use yield stress (σᵧ) &amp; show M<sub>y</sub></span>
+          </div>
+          <div class="col">
+            <span class="small">Species (sets σᵧ)</span>
+            <select id="speciesSel">
+              <option value="generic" data-sigma="40">Generic hardwood (40 MPa)</option>
+              <option value="poplar_willow" data-sigma="30">Poplar / Willow (~30 MPa)</option>
+              <option value="beech_sycamore" data-sigma="40">Beech / Sycamore (~40 MPa)</option>
+              <option value="oak" data-sigma="45">Oak (~45 MPa)</option>
+              <option value="chestnut" data-sigma="40">Sweet Chestnut (~40 MPa)</option>
+              <option value="scots_pine" data-sigma="32">Scots Pine (~32 MPa)</option>
+              <option value="douglas_fir" data-sigma="38">Douglas Fir (~38 MPa)</option>
+              <option value="tropical_dense" data-sigma="55">Dense tropical hardwood (~55 MPa)</option>
+              <option value="custom" data-sigma="">Custom (enter σᵧ)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" id="matControls">
+          <div class="col">
+            <span class="small">
+              σ<sub>y</sub> (yield stress, MPa)
+            </span>
+            <input id="sigmaY" type="number" value="40" step="1" />
+            <div class="small">
+              σᵧ is the stress at which intact wood fibres start to fail in bending. Here it just turns section modulus into a theoretical
+              yield moment M<sub>y</sub>. Real stems are weaker and more variable — use mainly for comparison, not exact failure prediction.
+            </div>
+          </div>
+          <div class="col" style="display:flex;align-items:flex-end;gap:8px;">
+            <button id="reset" class="primary" style="width:100%">Reset to 1000×1000 / 500×500</button>
+          </div>
+        </div>
+
+        
+      </div>
+
+      <!-- RIGHT: GRAPHICS + NUMBERS + WIND -->
+      <div class="right">
+        <canvas id="preview" width="520" height="380"></canvas>
+        <div class="small" style="margin-top:4px">
+          Bright green ring = remaining stem wall; dark interior = cavity/void (including any openings).
+          Arrows show relative bending strength for loads along D₁ (horizontal) and D₂ (vertical). N/E/S/W indicator fixes orientation.
+        </div>
+
+        <table>
+          <tr><th>Quantity</th><th>Value</th></tr>
+          <tr><td>Stem area (no cavity)</td><td id="areaStem">-</td></tr>
+          <tr><td>Net area (with cavity &amp; openings)</td><td id="areaNet">-</td></tr>
+          <tr><td>S (solid) — bending parallel to D₁</td><td id="SsolidMaj">-</td></tr>
+          <tr><td>S (solid) — bending parallel to D₂</td><td id="SsolidMin">-</td></tr>
+          <tr><td>S (hollow) — bending parallel to D₁</td><td id="ShollowMaj">-</td></tr>
+          <tr><td>S (hollow) — bending parallel to D₂</td><td id="ShollowMin">-</td></tr>
+          <tr><td>Remaining strength — D₁ direction</td><td id="remainMaj">-</td></tr>
+          <tr><td>Remaining strength — D₂ direction</td><td id="remainMin">-</td></tr>
+          <tr id="rowMy"><td>M<sub>y</sub> hollow (weaker direction)</td><td id="My">-</td></tr>
+          <tr><td>Loss of strength — worst direction</td><td id="lossWorst">-</td></tr>
+          <tr><td>Stem structural condition (geometry)</td><td id="stemCond">-</td></tr>
+        </table>
+
+        <table>
+          <tr><th>Wall thickness</th><th>Value</th></tr>
+          <tr><td>West (left, W)</td><td id="wallW">-</td></tr>
+          <tr><td>East (right, E)</td><td id="wallE">-</td></tr>
+          <tr><td>North (top, N)</td><td id="wallN">-</td></tr>
+          <tr><td>South (bottom, S)</td><td id="wallS">-</td></tr>
+        </table>
+
+        <div class="small" style="margin-top:4px;">
+          All strength percentages are relative to the intact stem with the same D₁ and D₂ (no cavity/openings = 100%).
+        </div>
+
+        <div id="lossSummary" class="small"></div>
+        <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="saveImage" class="primary">Save stem cross-section PNG</button>
+        </div>
+
+        <!-- WIND & SETTING BLOCK -->
+        <div id="windBlock" class="opening-block" style="margin-top:10px;">
+          <span class="small"><strong>Wind &amp; setting (stem strength vs anchorage windfirmness)</strong></span>
+          <p class="small" style="margin-top:4px;">
+            Uses the current hollow-section bending capacity M<sub>y</sub> (weaker direction) from StemZ, plus a root factor, to compare
+            <strong>stem strength</strong> and <strong>anchorage/roots</strong> under a static wind model. Also estimates the 10&nbsp;m wind
+            speed at which safety factor ≈ 1.0.
+          </p>
+
+          <!-- UK PRESET -->
+          <div class="row">
+            <div class="col">
+              <span class="small">UK wind preset (approx.)</span>
+              <select id="windPreset">
+                <option value="">(None – manual entries)</option>
+                <option value="uk_london_south">SE England / London</option>
+                <option value="uk_england_inland">England &amp; Wales – inland lowland</option>
+                <option value="uk_england_coastal">England &amp; Wales – coastal / headlands</option>
+                <option value="uk_scotland_inland">Scotland – inland</option>
+                <option value="uk_scotland_coastal">Scotland &amp; N. Ireland – coastal / very exposed</option>
+              </select>
+              <span id="windPresetInfo" class="small">
+                Choose a preset as a starting point then tweak v₁₀,ref / cᶻ manually.
+              </span>
+            </div>
+          </div>
+
+          <!-- TREE GEOMETRY -->
+          <div class="row" style="margin-top:6px;">
+            <div class="col">
+              <span class="small">Tree height H (m)</span>
+              <input id="windH" type="number" step="0.1" value="20" />
+            </div>
+            <div class="col">
+              <span class="small">Crown base height (m)</span>
+              <input id="windCrownBase" type="number" step="0.1" value="6" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <span class="small">Crown width W<sub>crown</sub> (m)</span>
+              <input id="windCrownW" type="number" step="0.1" value="8" />
+            </div>
+            <div class="col">
+              <span class="small">Crown depth D<sub>crown</sub> (m, vertical)</span>
+              <input id="windCrownD" type="number" step="0.1" value="10" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <span class="small">Crown density</span>
+              <select id="windCrownDensity">
+                <option value="0.6">Open / sparse (k<sub>crown</sub> ≈ 0.6)</option>
+                <option value="0.8" selected>Normal (k<sub>crown</sub> ≈ 0.8)</option>
+                <option value="1.0">Dense (k<sub>crown</sub> ≈ 1.0)</option>
+              </select>
+            </div>
+            <div class="col">
+              <span class="small">Projected crown area A<sub>c</sub> (m²)</span>
+              <input id="windAc" type="number" step="0.1" value="64" />
+              <span class="small">Auto = W × D × k<sub>crown</sub> (editable).</span>
+            </div>
+          </div>
+
+          <!-- EFFECTIVE HEIGHT AUTO/MANUAL -->
+          <div class="row">
+            <div class="col">
+              <span class="small">Effective height z<sub>e</sub> (m)</span>
+              <input id="windZe" type="number" step="0.1" value="" />
+              <span class="small">
+                z<sub>e</sub> ~ centre of crown by area. Auto uses midpoint of the live crown (between base and top).
+              </span>
+            </div>
+            <div class="col" style="display:flex;align-items:flex-end;gap:6px;">
+              <input id="windZeAuto" type="checkbox" style="width:auto;" checked />
+              <span class="small">
+                Auto z<sub>e</sub> from H &amp; crown base
+              </span>
+            </div>
+          </div>
+
+          <!-- WIND PARAMETERS -->
+          <div class="row">
+            <div class="col">
+              <span class="small">Ref. 10 m wind v₁₀,ref (m/s)</span>
+              <input id="windV10" type="number" step="0.5" value="25" />
+            
+              <span class="small expl-note">Manual input allows use with wind data from non-UK standards (e.g. Eurocode EN 1991-1-4, ASCE 7, national wind atlases). Ensure consistency of averaging period and exposure.</span>
+              </div>
+            <div class="col">
+              <span class="small">Exposure factor cᶻ</span>
+              <input id="windCz" type="number" step="0.05" value="1.10" />
+              <span class="small">Approx. roughness / topography factor at tree height.</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <span class="small">
+                Gust factor G
+              </span>
+              <input id="windG" type="number" step="0.05" value="1.4" />
+              <span class="small">
+                G scales up the mean wind to short-term gusts. As a guide: sheltered/urban ≈1.3, typical UK suburban/open country ≈1.4,
+                very exposed hilltops/headlands ≈1.5–1.6. If unsure, 1.4 is a reasonable default.
+              </span>
+            </div>
+            <div class="col">
+              <span class="small">
+                Drag coefficient C<sub>d</sub>
+              </span>
+              <input id="windCd" type="number" step="0.05" value="0.5" />
+              <span class="small">
+                C<sub>d</sub> reflects how blunt/dense the crown is. Rough bands: leaf-off broadleaf ≈0.2–0.3;
+                leaf-on broadleaf ≈0.4–0.6; open conifer ≈0.4–0.5; very dense conifer/shelterbelt ≈0.6–0.9.
+                If unsure for leaf-on broadleaf, use ~0.5.
+              </span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <span class="small">Air density ρ (kg/m³)</span>
+              <input id="windRho" type="number" step="0.01" value="1.25" />
+            </div>
+            <div class="col">
+              <span class="small">Wind factor γ<sub>w</sub></span>
+              <input id="windGammaW" type="number" step="0.1" value="1.5" />
+              <span class="small">Design factor for wind (e.g. partial factor / safety on load side).</span>
+            </div>
+          </div>
+
+          <!-- ROOT CONDITION -->
+          <div class="row">
+            <div class="col">
+              <span class="small">Root / anchorage condition</span>
+              <select id="windRootCond">
+                <option value="1.0">Good: deep, unrestricted roots (k<sub>root</sub>=1.0)</option>
+                <option value="0.7">Moderate: compaction / some restriction (k<sub>root</sub>=0.7)</option>
+                <option value="0.5">Poor: severe restriction / decay / cut roots (k<sub>root</sub>=0.5)</option>
+              </select>
+            </div>
+            <div class="col">
+              <span class="small">Target safety factor SF<sub>target</sub></span>
+              <input id="windSFtarget" type="number" step="0.1" value="1.5" />
+            </div>
+          </div>
+
+          <div style="margin-top:8px;" class="small">
+            <strong>Where to get v₁₀,ref:</strong> use the UK National Annex to BS EN 1991-1-4 (wind map, Figure NA.1),
+            Met Office / national wind maps, or an EN 1991-1-4 based UK wind calculator.
+            The presets here are only approximate starting points — always confirm values.
+            <br />
+            <a class="small-link" href="https://www.eurocodeapplied.com/wind-action/uk/peak-velocity-pressure"
+               target="_blank" rel="noopener">
+              Example: UK &amp; Irish NA wind calculator (external link)
+            </a>
+          </div>
+
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button id="windCalcBtn" class="primary">Check windfirmness</button>
+            <div id="windResults" class="small"></div>
+          <div id="windInterpretation" class="small" style="margin-top:8px; padding:8px; border:1px solid rgba(255,255,255,0.12); border-radius:8px;">
+            <strong>Interpreting safety factors (guidance only):</strong><br/>
+            Safety factor (SF) is the ratio of resisting capacity to wind loading for the selected scenario.
+            Values around <strong>1.5 or greater</strong> are commonly interpreted in practice as providing a comfortable margin, allowing for uncertainty and variability.
+            This output supports professional judgement and does not determine safety or failure.
+            <div style="margin-top:6px;">
+              <span style="display:inline-block;min-width:78px;"><strong>SF ≥ 1.5</strong></span> comfortable margin<br/>
+              <span style="display:inline-block;min-width:78px;"><strong>1.2–1.5</strong></span> reduced margin — consider context<br/>
+              <span style="display:inline-block;min-width:78px;"><strong>1.0–1.2</strong></span> marginal under assumptions<br/>
+              <span style="display:inline-block;min-width:78px;"><strong>&lt; 1.0</strong></span> exceeds resistance for this scenario
+            </div>
+          </div>
+
+          </div>
+
+          <canvas id="treePreview" width="520" height="220"></canvas>
+          <div class="small">
+            Tree model: height and crown dimensions are to scale within the frame. Crown colour deepens with density, and the
+            ground zone reflects the selected root condition (green = good, amber = moderate, red = poor).
+          </div>
+          <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;">
+            <button id="saveFullImage" class="primary">Save full StemZ + WindZ PNG</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <details class="card">
+      <summary>How to use StemZ + windfirmness</summary>
+      <ol class="small" style="margin-top:6px;">
+        <li>Set <strong>D₁/D₂</strong> from field measurements (horizontal/vertical diameters).</li>
+        <li>Set cavity <strong>R₁/R₂</strong> based on internal decay size (e.g. from sounding / tomography).</li>
+        <li>Use <strong>X/Y offset</strong> to move the cavity toward the observed defect side.</li>
+        <li>If the cavity is open to the surface, add 1–2 <strong>openings</strong> with side/depth/width.</li>
+        <li>Check <strong>remaining strength</strong> in D₁ and D₂ directions (arrows + %) plus <strong>wall thickness</strong> W/E/N/S.</li>
+        <li>Enable <strong>material strength mode</strong> and select a species to view Mᵧ (yield bending moment) for the weaker direction.</li>
+        <li>In <strong>Wind &amp; setting</strong>, pick the nearest UK preset or enter v₁₀,ref and cᶻ manually, add tree height, crown base height, crown size and density, root condition, then hit “Check windfirmness”.</li>
+        <li>Interpret both <strong>stem strength factor</strong> and <strong>anchorage windfirmness factor</strong> plus the critical wind speeds as inputs to professional judgement, not as pass/fail rules.</li>
+      </ol>
+    </details>
+
+    <footer>
+      Elliptical section modulus is calculated by summing small area elements inside the remaining wood and their distance to the neutral axis in each principal direction.
+      Solid ellipse values are taken from closed-form formulas; hollow/open cases are numeric.
+      Results are approximate and idealised; they do not include defects such as cracks, load eccentricity, torsion, dynamic effects or species variability.
+      Wind loads use a simple static drag model on the crown, scaled by site wind, gust and drag factors.
+      Use all outputs to support professional judgement rather than as a pass/fail rule.
+    </footer>
+  </div>
+
+<script>
+  // --- DOM references: stem block ---
+  const stemD1_range = document.getElementById('stemD1_range');
+  const stemD2_range = document.getElementById('stemD2_range');
+  const stemD1 = document.getElementById('stemD1');
+  const stemD2 = document.getElementById('stemD2');
+
+  const cavR1_range = document.getElementById('cavR1_range');
+  const cavR2_range = document.getElementById('cavR2_range');
+  const cavR1 = document.getElementById('cavR1');
+  const cavR2 = document.getElementById('cavR2');
+
+  const offX_range = document.getElementById('offX_range');
+  const offY_range = document.getElementById('offY_range');
+  const offX = document.getElementById('offX');
+  const offY = document.getElementById('offY');
+
+  const openingsCount = document.getElementById('openingsCount');
+  const opening1Block = document.getElementById('opening1');
+  const opening2Block = document.getElementById('opening2');
+
+  const open1_side = document.getElementById('open1_side');
+  const open1_depth_range = document.getElementById('open1_depth_range');
+  const open1_depth = document.getElementById('open1_depth');
+  const open1_half_range = document.getElementById('open1_half_range');
+  const open1_half = document.getElementById('open1_half');
+
+  const open2_side = document.getElementById('open2_side');
+  const open2_depth_range = document.getElementById('open2_depth_range');
+  const open2_depth = document.getElementById('open2_depth');
+  const open2_half_range = document.getElementById('open2_half_range');
+  const open2_half = document.getElementById('open2_half');
+
+  const matMode = document.getElementById('matMode');
+  const speciesSel = document.getElementById('speciesSel');
+  const matControls = document.getElementById('matControls');
+
+  const sigmaY = document.getElementById('sigmaY');
+  const resetBtn = document.getElementById('reset');
+  const saveImageBtn = document.getElementById('saveImage');
+  const saveFullImageBtn = document.getElementById('saveFullImage');
+
+  const areaStemEl = document.getElementById('areaStem');
+  const areaNetEl = document.getElementById('areaNet');
+  const SsolidMajEl = document.getElementById('SsolidMaj');
+  const SsolidMinEl = document.getElementById('SsolidMin');
+  const ShollowMajEl = document.getElementById('ShollowMaj');
+  const ShollowMinEl = document.getElementById('ShollowMin');
+  const remainMajEl = document.getElementById('remainMaj');
+  const remainMinEl = document.getElementById('remainMin');
+  const MyEl = document.getElementById('My');
+  const lossWorstEl = document.getElementById('lossWorst');
+  const lossSummary = document.getElementById('lossSummary');
+  const stemCondEl = document.getElementById('stemCond');
+  const rowMy = document.getElementById('rowMy');
+
+  const wallWEl = document.getElementById('wallW');
+  const wallEEl = document.getElementById('wallE');
+  const wallNEl = document.getElementById('wallN');
+  const wallSEl = document.getElementById('wallS');
+
+  const canvas = document.getElementById('preview');
+  const ctx = canvas.getContext('2d');
+
+  // --- Wind DOM refs ---
+  const windPreset       = document.getElementById('windPreset');
+  const windPresetInfo   = document.getElementById('windPresetInfo');
+
+  const windH            = document.getElementById('windH');
+  const windCrownBase    = document.getElementById('windCrownBase');
+  const windCrownW       = document.getElementById('windCrownW');
+  const windCrownD       = document.getElementById('windCrownD');
+  const windCrownDensity = document.getElementById('windCrownDensity');
+  const windAc           = document.getElementById('windAc');
+  const windZe           = document.getElementById('windZe');
+  const windZeAuto       = document.getElementById('windZeAuto');
+
+  const windV10          = document.getElementById('windV10');
+  const windCz           = document.getElementById('windCz');
+  const windG            = document.getElementById('windG');
+  const windCd           = document.getElementById('windCd');
+  const windRho          = document.getElementById('windRho');
+  const windGammaW       = document.getElementById('windGammaW');
+  const windRootCond     = document.getElementById('windRootCond');
+  const windSFtarget     = document.getElementById('windSFtarget');
+  const windResults      = document.getElementById('windResults');
+  const windCalcBtn      = document.getElementById('windCalcBtn');
+
+  const treeCanvas  = document.getElementById('treePreview');
+  const treeCtx     = treeCanvas.getContext('2d');
+
+  let lastMetrics = null;
+  let lastWind = null;
+
+  function clamp(val, min, max){
+    return Math.min(max, Math.max(min, val));
+  }
+
+  function updateOpeningVisibility(){
+    const count = parseInt(openingsCount.value,10) || 0;
+    opening1Block.classList.toggle('hidden', count < 1);
+    opening2Block.classList.toggle('hidden', count < 2);
+  }
+
+  function updateMaterialVisibility(){
+    const on = matMode.checked;
+    if(on){
+      matControls.classList.remove('hidden');
+      rowMy.classList.remove('hidden');
+    } else {
+      matControls.classList.add('hidden');
+      rowMy.classList.add('hidden');
+    }
+    updateAll();
+  }
+
+  openingsCount.addEventListener('change', ()=>{
+    updateOpeningVisibility();
+    updateAll();
+  });
+
+  matMode.addEventListener('change', updateMaterialVisibility);
+
+  function applySpeciesSigma(){
+    const opt = speciesSel.options[speciesSel.selectedIndex];
+    const sig = opt.getAttribute('data-sigma');
+    if(speciesSel.value !== 'custom' && sig){
+      sigmaY.value = sig;
+    }
+    updateAll();
+  }
+
+  speciesSel.addEventListener('change', applySpeciesSigma);
+
+  // --- Sync between sliders & inputs ---
+  function updateOffsetRanges(d1mm,d2mm,R1mm,R2mm){
+    const maxOffX = Math.max(d1mm/2 - R1mm, 0);
+    const maxOffY = Math.max(d2mm/2 - R2mm, 0);
+    offX_range.min = (-maxOffX).toFixed(0);
+    offX_range.max = ( maxOffX).toFixed(0);
+    offY_range.min = (-maxOffY).toFixed(0);
+    offY_range.max = ( maxOffY).toFixed(0);
+
+    let x = parseFloat(offX.value)||0;
+    let y = parseFloat(offY.value)||0;
+    x = clamp(x, -maxOffX, maxOffX);
+    y = clamp(y, -maxOffY, maxOffY);
+    offX.value = x.toFixed(0);
+    offY.value = y.toFixed(0);
+    offX_range.value = offX.value;
+    offY_range.value = offY.value;
+  }
+
+  function syncFromSliders(){
+    stemD1.value = stemD1_range.value;
+    stemD2.value = stemD2_range.value;
+
+    cavR1.value = cavR1_range.value;
+    cavR2.value = cavR2_range.value;
+
+    offX.value = offX_range.value;
+    offY.value = offY_range.value;
+
+    open1_depth.value = open1_depth_range.value;
+    open1_half.value = open1_half_range.value;
+    open2_depth.value = open2_depth_range.value;
+    open2_half.value = open2_half_range.value;
+
+    syncDerivedAndUpdate();
+  }
+
+  function syncFromInputs(){
+    let d1 = parseFloat(stemD1.value)||0;
+    let d2 = parseFloat(stemD2.value)||0;
+    d1 = clamp(d1, parseFloat(stemD1_range.min), parseFloat(stemD1_range.max));
+    d2 = clamp(d2, parseFloat(stemD2_range.min), parseFloat(stemD2_range.max));
+    stemD1.value = d1.toFixed(0);
+    stemD2.value = d2.toFixed(0);
+    stemD1_range.value = stemD1.value;
+    stemD2_range.value = stemD2.value;
+
+    let R1 = parseFloat(cavR1.value)||0;
+    let R2 = parseFloat(cavR2.value)||0;
+    const maxR1 = d1/2;
+    const maxR2 = d2/2;
+    R1 = clamp(R1, 0, maxR1);
+    R2 = clamp(R2, 0, maxR2);
+    cavR1.value = R1.toFixed(0);
+    cavR2.value = R2.toFixed(0);
+    cavR1_range.value = cavR1.value;
+    cavR2_range.value = cavR2.value;
+
+    const maxDepth = Math.min(d1,d2)/2;
+    const maxHalf = Math.min(d1,d2)/2;
+    [open1_depth_range, open2_depth_range].forEach(r=>{
+      r.max = maxDepth.toFixed(0);
+      if(parseFloat(r.value) > maxDepth){ r.value = maxDepth.toFixed(0); }
+    });
+    [open1_half_range, open2_half_range].forEach(r=>{
+      r.max = maxHalf.toFixed(0);
+      if(parseFloat(r.value) > maxHalf){ r.value = maxHalf.toFixed(0); }
+    });
+
+    [open1_depth, open2_depth].forEach((inp,i)=>{
+      let v = parseFloat(inp.value)||0;
+      v = clamp(v, 0, maxDepth);
+      inp.value = v.toFixed(0);
+      (i===0?open1_depth_range:open2_depth_range).value = inp.value;
+    });
+    [open1_half, open2_half].forEach((inp,i)=>{
+      let v = parseFloat(inp.value)||0;
+      v = clamp(v, 0, maxHalf);
+      inp.value = v.toFixed(0);
+      (i===0?open1_half_range:open2_half_range).value = inp.value;
+    });
+
+    updateOffsetRanges(d1,d2,R1,R2);
+    updateAll();
+  }
+
+  function syncDerivedAndUpdate(){
+    const d1 = parseFloat(stemD1.value)||0;
+    const d2 = parseFloat(stemD2.value)||0;
+    const R1 = parseFloat(cavR1.value)||0;
+    const R2 = parseFloat(cavR2.value)||0;
+    updateOffsetRanges(d1,d2,R1,R2);
+    updateAll();
+  }
+
+  // --- Section modulus numeric integration ---
+  function computeSection(D1mm,D2mm,R1mm,R2mm,offXmm,offYmm, openings){
+    const a = D1mm/2;
+    const b = D2mm/2;
+    const hasCavity = (R1mm>0 && R2mm>0);
+    const step = 10; // mm grid spacing
+
+    let area_mm2 = 0;
+    let sumX = 0, sumY = 0, sumX2=0, sumY2=0;
+    let x_minWood = Infinity, x_maxWood = -Infinity;
+    let y_minWood = Infinity, y_maxWood = -Infinity;
+
+    let x_void_min = Infinity, x_void_max = -Infinity;
+    let y_void_min = Infinity, y_void_max = -Infinity;
+
+    const minx = -a, maxx = a;
+    const miny = -b, maxy = b;
+    const dA = step*step;
+
+    for(let x = minx+step/2; x <= maxx-step/2; x += step){
+      for(let y = miny+step/2; y <= maxy-step/2; y += step){
+        const inOuter = (x*x)/(a*a) + (y*y)/(b*b) <= 1.0;
+        if(!inOuter) continue;
+
+        let inCav = false;
+        if(hasCavity){
+          const dx = x - offXmm;
+          const dy = y - offYmm;
+          inCav = (dx*dx)/(R1mm*R1mm) + (dy*dy)/(R2mm*R2mm) <= 1.0;
+        }
+
+        let inMouth = false;
+        if(openings && openings.length){
+          for(const op of openings){
+            if(!op.enabled) continue;
+            const depth = op.depth;
+            const halfW = op.half;
+            if(depth <= 0 || halfW <= 0) continue;
+
+            if(op.side === 'left'){
+              if(x >= -a && x <= -a + depth &&
+                 y >= (offYmm - halfW) && y <= (offYmm + halfW)){
+                inMouth = true;
+                break;
+              }
+            } else if(op.side === 'right'){
+              if(x <= a && x >= a - depth &&
+                 y >= (offYmm - halfW) && y <= (offYmm + halfW)){
+                inMouth = true;
+                break;
+              }
+            } else if(op.side === 'top'){
+              if(y <= b && y >= b - depth &&
+                 x >= (offXmm - halfW) && x <= (offXmm + halfW)){
+                inMouth = true;
+                break;
+              }
+            } else if(op.side === 'bottom'){
+              if(y >= -b && y <= -b + depth &&
+                 x >= (offXmm - halfW) && x <= (offXmm + halfW)){
+                inMouth = true;
+                break;
+              }
+            }
+          }
+        }
+
+        if(inCav || inMouth){
+          if(x < x_void_min) x_void_min = x;
+          if(x > x_void_max) x_void_max = x;
+          if(y < y_void_min) y_void_min = y;
+          if(y > y_void_max) y_void_max = y;
+          continue;
+        }
+
+        // wood
+        area_mm2 += dA;
+        sumX += x*dA;
+        sumY += y*dA;
+        sumX2 += x*x*dA;
+        sumY2 += y*y*dA;
+        if(x < x_minWood) x_minWood = x;
+        if(x > x_maxWood) x_maxWood = x;
+        if(y < y_minWood) y_minWood = y;
+        if(y > y_maxWood) y_maxWood = y;
+      }
+    }
+
+    if(area_mm2 <= 0){
+      return {
+        area_m2:0,
+        S_major:0,
+        S_minor:0,
+        centroid:{x:0,y:0},
+        woodExtents:{x_min:0,x_max:0,y_min:0,y_max:0},
+        voidExtents:{x_min:0,x_max:0,y_min:0,y_max:0}
+      };
+    }
+
+    const cx = sumX / area_mm2;
+    const cy = sumY / area_mm2;
+    const Ix_mm4 = sumY2 - area_mm2*cy*cy;
+    const Iy_mm4 = sumX2 - area_mm2*cx*cx;
+
+    const area_m2 = area_mm2 / 1e6;
+    const Ix_m4 = Ix_mm4 / 1e12;
+    const Iy_m4 = Iy_mm4 / 1e12;
+
+    const c_top = y_maxWood - cy;
+    const c_bot = cy - y_minWood;
+    const c_y = Math.max(c_top, c_bot);
+
+    const c_right = x_maxWood - cx;
+    const c_left = cx - x_minWood;
+    const c_x = Math.max(c_right, c_left);
+
+    const cy_m = c_y / 1000.0;
+    const cx_m = c_x / 1000.0;
+
+    const S_major = cy_m>0 ? Ix_m4 / cy_m : 0;
+    const S_minor = cx_m>0 ? Iy_m4 / cx_m : 0;
+
+    return {
+      area_m2,
+      S_major,
+      S_minor,
+      centroid:{x:cx,y:cy},
+      woodExtents:{x_min:x_minWood,x_max:x_maxWood,y_min:y_minWood,y_max:y_maxWood},
+      voidExtents:{
+        x_min: (x_void_min===Infinity?0:x_void_min),
+        x_max: (x_void_max===-Infinity?0:x_void_max),
+        y_min: (y_void_min===Infinity?0:y_void_min),
+        y_max: (y_void_max===-Infinity?0:y_void_max)
+      }
+    };
+  }
+
+  function strengthColour(remain){
+    if(remain >= 80) return '#2fa678';
+    if(remain >= 50) return '#f2c744';
+    return '#ff6868';
+  }
+
+  function drawArrows(remain_major, remain_minor){
+    const w = canvas.width;
+    const h = canvas.height;
+
+    const baseLen = 80;
+    const minLen = 30;
+
+    const lenH = Math.max(minLen, baseLen * Math.max(0,remain_major)/100);
+    const colH = strengthColour(remain_major);
+    const yMid = h - 40;
+    const xStart = w/2 - lenH/2;
+    const xEnd = w/2 + lenH/2;
+
+    ctx.strokeStyle = colH;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(xStart, yMid);
+    ctx.lineTo(xEnd, yMid);
+    ctx.stroke();
+
+    const ah = 8;
+    ctx.beginPath();
+    ctx.moveTo(xEnd, yMid);
+    ctx.lineTo(xEnd-ah, yMid-ah);
+    ctx.lineTo(xEnd-ah, yMid+ah);
+    ctx.closePath();
+    ctx.fillStyle = colH;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(xStart, yMid);
+    ctx.lineTo(xStart+ah, yMid-ah);
+    ctx.lineTo(xStart+ah, yMid+ah);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = colH;
+    ctx.font = '11px system-ui';
+    ctx.fillText('D₁ dir: '+remain_major.toFixed(0)+'%', xStart, yMid-10);
+
+    const lenV = Math.max(minLen, baseLen * Math.max(0,remain_minor)/100);
+    const colV = strengthColour(remain_minor);
+    const xMid = w - 40;
+    const yTop = h/2 - lenV/2;
+    const yBot = h/2 + lenV/2;
+
+    ctx.strokeStyle = colV;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(xMid, yTop);
+    ctx.lineTo(xMid, yBot);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(xMid, yTop);
+    ctx.lineTo(xMid-ah, yTop+ah);
+    ctx.lineTo(xMid+ah, yTop+ah);
+    ctx.closePath();
+    ctx.fillStyle = colV;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(xMid, yBot);
+    ctx.lineTo(xMid-ah, yBot-ah);
+    ctx.lineTo(xMid+ah, yBot-ah);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = colV;
+    ctx.font = '11px system-ui';
+    ctx.fillText('D₂ dir: '+remain_minor.toFixed(0)+'%', xMid-65, yTop-6);
+  }
+
+  function drawCardinalIndicator(){
+    const size = 48;
+    const padding = 8;
+    const x0 = canvas.width - size - padding;
+    const y0 = padding;
+
+    ctx.save();
+    ctx.translate(x0 + size/2, y0 + size/2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(0,0,size/2-4,0,Math.PI*2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0,-size/2+8); ctx.lineTo(0,size/2-8);
+    ctx.moveTo(-size/2+8,0); ctx.lineTo(size/2-8,0);
+    ctx.stroke();
+
+    ctx.fillStyle = '#e6efde';
+    ctx.font = '10px system-ui';
+    ctx.textAlign = 'center'; ctx.textBaseline='middle';
+    ctx.fillText('N',0,-size/2+10);
+    ctx.fillText('S',0,size/2-10);
+    ctx.fillText('E',size/2-10,0);
+    ctx.fillText('W',-size/2+10,0);
+    ctx.restore();
+  }
+
+  function drawStem(D1mm,D2mm,R1mm,R2mm,offXmm,offYmm, openings, remain_major, remain_minor){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const pad = 60;
+    const maxD = Math.max(D1mm, D2mm) || 1;
+    const scale = Math.min((canvas.width-2*pad)/maxD, (canvas.height-2*pad)/maxD);
+    const cx = canvas.width/2;
+    const cy = canvas.height/2;
+
+    ctx.fillStyle = '#020d0d';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    const a = (D1mm/2)*scale;
+    const b = (D2mm/2)*scale;
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    const halfSpan = maxD*scale/2;
+    for(let x = cx - halfSpan; x <= cx + halfSpan; x += scale*100){
+      ctx.beginPath(); ctx.moveTo(x, cy-halfSpan); ctx.lineTo(x, cy+halfSpan); ctx.stroke();
+    }
+    for(let y = cy - halfSpan; y <= cy + halfSpan; y += scale*100){
+      ctx.beginPath(); ctx.moveTo(cx-halfSpan, y); ctx.lineTo(cx+halfSpan, y); ctx.stroke();
+    }
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    ctx.beginPath();
+    for(let t=0;t<=Math.PI*2+0.001;t+=0.02){
+      const x = a*Math.cos(t);
+      const y = b*Math.sin(t);
+      if(t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(22,130,90,0.9)';
+    ctx.fill();
+
+    if(R1mm>0 && R2mm>0){
+      const ac = R1mm*scale;
+      const bc = R2mm*scale;
+      const x0 = offXmm*scale;
+      const y0 = -offYmm*scale;
+
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      for(let t=0;t<=Math.PI*2+0.001;t+=0.02){
+        const x = x0 + ac*Math.cos(t);
+        const y = y0 + bc*Math.sin(t);
+        if(t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.beginPath();
+      for(let t=0;t<=Math.PI*2+0.001;t+=0.02){
+        const x = x0 + ac*Math.cos(t);
+        const y = y0 + bc*Math.sin(t);
+        if(t===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = '#7bffba';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    const a_mm = D1mm/2;
+    const b_mm = D2mm/2;
+
+    if(openings && openings.length){
+      for(const op of openings){
+        if(!op.enabled) continue;
+        const depth = op.depth;
+        const halfW = op.half;
+        if(depth <= 0 || halfW <= 0) continue;
+
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        if(op.side === 'left'){
+          const x_outer = -a_mm*scale;
+          const x_inner = (-a_mm + depth)*scale;
+          const y_top = (-halfW - offYmm)*scale * -1;
+          const y_bot = (halfW - offYmm)*scale * -1;
+          ctx.rect(x_outer, y_top, x_inner - x_outer, y_bot - y_top);
+        } else if(op.side === 'right'){
+          const x_outer = a_mm*scale;
+          const x_inner = (a_mm - depth)*scale;
+          const y_top = (-halfW - offYmm)*scale * -1;
+          const y_bot = (halfW - offYmm)*scale * -1;
+          ctx.rect(x_inner, y_top, x_outer - x_inner, y_bot - y_top);
+        } else if(op.side === 'top'){
+          const y_outer = -b_mm*scale;
+          const y_inner = (-b_mm + depth)*scale;
+          const x_left = (offXmm - halfW)*scale;
+          const x_right = (offXmm + halfW)*scale;
+          ctx.rect(x_left, y_outer, x_right - x_left, y_inner - y_outer);
+        } else if(op.side === 'bottom'){
+          const y_outer = b_mm*scale;
+          const y_inner = (b_mm - depth)*scale;
+          const x_left = (offXmm - halfW)*scale;
+          const x_right = (offXmm + halfW)*scale;
+          ctx.rect(x_left, y_inner, x_right - x_left, y_outer - y_inner);
+        }
+        ctx.fill();
+
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = '#7bffba';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+    }
+
+    ctx.beginPath();
+    ctx.ellipse(0,0,a,b,0,0,Math.PI*2);
+    ctx.strokeStyle = '#2fa678';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.restore();
+
+    ctx.fillStyle = 'rgba(223,255,240,0.9)';
+    ctx.font = '11px system-ui';
+    ctx.fillText('D₁ = '+D1mm.toFixed(0)+' mm', 10, 16);
+    ctx.fillText('D₂ = '+D2mm.toFixed(0)+' mm', 10, 30);
+
+    drawArrows(remain_major, remain_minor);
+    drawCardinalIndicator();
+  }
+
+  // --- Wind auto helpers ---
+
+  function autoUpdateCrownAreaFromInputs() {
+    const W = parseFloat(windCrownW.value) || 0;
+    const D = parseFloat(windCrownD.value) || 0;
+    const k = parseFloat(windCrownDensity.value) || 0;
+    if (W > 0 && D > 0 && k > 0) {
+      const Ac = W * D * k;
+      windAc.value = Ac.toFixed(1);
+    }
+  }
+
+  function autoUpdateZe(force=false) {
+    if (!windZeAuto.checked && !force) return;
+    const H  = parseFloat(windH.value);
+    const Hb = parseFloat(windCrownBase.value);
+    if (isNaN(H) || H <= 0) return;
+
+    let ze;
+    if (!isNaN(Hb) && Hb >= 0 && Hb < H) {
+      // midpoint of live crown: (H + Hb)/2
+      ze = 0.5 * (H + Hb);
+    } else {
+      // fallback: about 2/3 of the total height
+      ze = 0.67 * H;
+    }
+
+    ze = Math.max(0, Math.min(ze, H));
+
+    windZe.value = ze.toFixed(2);
+  }
+
+  function updateAll(){
+    const d1mm = parseFloat(stemD1.value)||0;
+    const d2mm = parseFloat(stemD2.value)||0;
+    const R1mm = parseFloat(cavR1.value)||0;
+    const R2mm = parseFloat(cavR2.value)||0;
+    const offXmm = parseFloat(offX.value)||0;
+    const offYmm = parseFloat(offY.value)||0;
+    const sig = parseFloat(sigmaY.value)||0;
+    const matOn = matMode.checked;
+
+    if(d1mm<=0 || d2mm<=0){
+      areaStemEl.textContent = 'Enter stem diameters > 0';
+      return;
+    }
+
+    const areaStem_m2 = Math.PI * (d1mm/1000)*(d2mm/1000) / 4;
+    const S_solid_major = Math.PI * Math.pow(d1mm/1000,2) * (d2mm/1000) / 32;
+    const S_solid_minor = Math.PI * Math.pow(d2mm/1000,2) * (d1mm/1000) / 32;
+
+    const count = parseInt(openingsCount.value,10)||0;
+    const openings = [];
+    if(count >= 1){
+      openings.push({
+        enabled:true,
+        side: open1_side.value,
+        depth: parseFloat(open1_depth.value)||0,
+        half: parseFloat(open1_half.value)||0
+      });
+    }
+    if(count >= 2){
+      openings.push({
+        enabled:true,
+        side: open2_side.value,
+        depth: parseFloat(open2_depth.value)||0,
+        half: parseFloat(open2_half.value)||0
+      });
+    }
+
+    const hasCavity = (R1mm>0 && R2mm>0);
+    const hasOpenings = openings.some(op => op.enabled && op.depth>0 && op.half>0);
+
+    let aNet_m2, S_hollow_major, S_hollow_minor;
+    let remain_major, remain_minor, lossWorst;
+    let tW, tE, tN, tS, tRW, tRE, tRN, tRS;
+    let S_worst, worstRemain;
+    let My_kNm = null;
+
+    const a_mm = d1mm/2;
+    const b_mm = d2mm/2;
+
+    if(!hasCavity && !hasOpenings){
+      aNet_m2 = areaStem_m2;
+      S_hollow_major = S_solid_major;
+      S_hollow_minor = S_solid_minor;
+      remain_major = 100;
+      remain_minor = 100;
+      worstRemain = 100;
+      lossWorst = 0;
+
+      tW = a_mm;
+      tE = a_mm;
+      tN = b_mm;
+      tS = b_mm;
+      tRW = 1;
+      tRE = 1;
+      tRN = 1;
+      tRS = 1;
+    } else {
+      const hollow = computeSection(d1mm,d2mm,R1mm,R2mm,offXmm,offYmm, openings);
+      aNet_m2 = hollow.area_m2;
+      S_hollow_major = hollow.S_major;
+      S_hollow_minor = hollow.S_minor;
+
+      remain_major = S_solid_major>0 ? S_hollow_major/S_solid_major*100 : 0;
+      remain_minor = S_solid_minor>0 ? S_hollow_minor/S_solid_minor*100 : 0;
+
+      remain_major = Math.max(0, Math.min(100, remain_major));
+      remain_minor = Math.max(0, Math.min(100, remain_minor));
+
+      S_worst = Math.min(S_hollow_major, S_hollow_minor);
+      worstRemain = Math.min(remain_major, remain_minor);
+      lossWorst = 100 - worstRemain;
+
+      const ve = hollow.voidExtents;
+      const x_void_min = ve.x_min;
+      const x_void_max = ve.x_max;
+      const y_void_min = ve.y_min;
+      const y_void_max = ve.y_max;
+
+      const x_void_E = Math.max(0, x_void_max);
+      const x_void_W = Math.min(0, x_void_min);
+      const y_void_N = Math.max(0, y_void_max);
+      const y_void_S = Math.min(0, y_void_min);
+
+      tE = a_mm - x_void_E;
+      tW = x_void_W + a_mm;
+      tN = b_mm - y_void_N;
+      tS = y_void_S + b_mm;
+
+      tE = Math.max(tE,0);
+      tW = Math.max(tW,0);
+      tN = Math.max(tN,0);
+      tS = Math.max(tS,0);
+
+      tRE = a_mm>0 ? tE / a_mm : 0;
+      tRW = a_mm>0 ? tW / a_mm : 0;
+      tRN = b_mm>0 ? tN / b_mm : 0;
+      tRS = b_mm>0 ? tS / b_mm : 0;
+    }
+
+    if(!S_worst){
+      S_worst = Math.min(S_hollow_major, S_hollow_minor);
+      worstRemain = Math.min(remain_major, remain_minor);
+      lossWorst = 100 - worstRemain;
+    }
+
+    if(matOn && S_worst>0 && sig>0){
+      const My_Nm = S_worst * (sig * 1e6);
+      My_kNm = My_Nm / 1000.0;
+      MyEl.textContent = My_kNm.toFixed(3)+' kN·m (σy='+sig.toFixed(1)+' MPa)';
+    } else if(matOn){
+      MyEl.textContent = 'Not defined (check σᵧ and geometry)';
+    } else {
+      MyEl.textContent = 'Material strength mode off';
+    }
+
+    areaStemEl.textContent = areaStem_m2.toExponential(4)+' m²';
+    areaNetEl.textContent = aNet_m2.toExponential(4)+' m²';
+    SsolidMajEl.textContent = S_solid_major.toExponential(4)+' m³';
+    SsolidMinEl.textContent = S_solid_minor.toExponential(4)+' m³';
+    ShollowMajEl.textContent = S_hollow_major.toExponential(4)+' m³';
+    ShollowMinEl.textContent = S_hollow_minor.toExponential(4)+' m³';
+    remainMajEl.textContent = remain_major.toFixed(1)+' %';
+    remainMinEl.textContent = remain_minor.toFixed(1)+' %';
+    lossWorstEl.textContent = lossWorst.toFixed(1)+' %';
+
+    const worstDir = (worstRemain === remain_major) ? 'parallel to D₁ (horizontal)' : 'parallel to D₂ (vertical)';
+
+    wallWEl.textContent = tW.toFixed(1)+' mm (t/R ≈ '+tRW.toFixed(2)+')';
+    wallEEl.textContent = tE.toFixed(1)+' mm (t/R ≈ '+tRE.toFixed(2)+')';
+    wallNEl.textContent = tN.toFixed(1)+' mm (t/R ≈ '+tRN.toFixed(2)+')';
+    wallSEl.textContent = tS.toFixed(1)+' mm (t/R ≈ '+tRS.toFixed(2)+')';
+
+
+    // Stem structural condition (geometry-only, from worst remaining bending capacity)
+    if (stemCondEl) {
+      let label = '';
+      let cls = 'stem-cond ';
+      if (!hasCavity && !hasOpenings) {
+        label = 'Intact section — treated as 100% geometric bending capacity in all directions.';
+        cls += 'stem-cond-good';
+      } else if (worstRemain >= 60) {
+        label = 'Reduced but still relatively robust geometric bending capacity (worst direction ≈ ' + worstRemain.toFixed(0) + '% of intact).';
+        cls += 'stem-cond-good';
+      } else if (worstRemain >= 30) {
+        label = 'Noticeable reduction in geometric bending capacity (worst direction ≈ ' + worstRemain.toFixed(0) + '% of intact). Review in context of loads and site.';
+        cls += 'stem-cond-reduced';
+      } else {
+        label = 'Substantial reduction in geometric bending capacity (worst direction ≈ ' + worstRemain.toFixed(0) + '% of intact). Use with caution and alongside field observations.';
+        cls += 'stem-cond-weak';
+      }
+      stemCondEl.textContent = label;
+      stemCondEl.className = cls;
+    }
+
+    let msg;
+    if(!hasCavity && !hasOpenings){
+      msg = 'No cavity or openings: intact stem taken as 100% capacity in all directions (0% loss).';
+      if(!matOn){
+        msg += ' Material strength mode is off (showing geometric baseline only).';
+      }
+    } else {
+      msg = 'Approx. '+lossWorst.toFixed(1)+' % loss of bending resistance due to cavity/openings (worst case: '+worstDir+').';
+      if(!matOn){
+        msg += ' Material strength mode is off (showing geometric losses only).';
+      }
+    }
+    lossSummary.textContent = msg;
+
+    drawStem(d1mm,d2mm,R1mm,R2mm,offXmm,offYmm, openings, remain_major, remain_minor);
+
+    lastMetrics = {
+      d1mm,d2mm,R1mm,R2mm,offXmm,offYmm,sig,
+      areaStem:areaStem_m2, areaNet:aNet_m2,
+      S_solid_major,S_solid_minor,S_hollow_major,S_hollow_minor,
+      remain_major,remain_minor,lossWorst,My_kNm,
+      wall:{tW,tE,tN,tS,tRW,tRE,tRN,tRS},
+      openingsCount:count,
+      openings,
+      matOn
+    };
+
+    // Wind-side visuals: keep crown area & z_e in sync when auto modes are on
+    autoUpdateCrownAreaFromInputs();
+    autoUpdateZe();
+    drawTreePreview();
+  }
+
+  function saveScenarioImage(){
+    if(!lastMetrics){
+      alert('Adjust a value first so the tool can calculate a scenario.');
+      return;
+    }
+    const w = canvas.width;
+    const h = canvas.height;
+    const extraH = 200;
+    const oc = document.createElement('canvas');
+    oc.width = w;
+    oc.height = h + extraH;
+    const c2 = oc.getContext('2d');
+
+    c2.fillStyle = '#020d0d';
+    c2.fillRect(0,0,oc.width,oc.height);
+
+    c2.drawImage(canvas,0,0);
+
+    c2.fillStyle = '#e6efde';
+    c2.font = '12px system-ui';
+    let y = h + 16;
+    const m = lastMetrics;
+    const openDesc = m.openingsCount===0 ? 'closed' :
+                     (m.openingsCount===1 ? '1 opening' : '2 openings');
+
+    const lines = [
+      'StemZ scenario snapshot',
+      'Stem: D₁='+m.d1mm.toFixed(0)+' mm, D₂='+m.d2mm.toFixed(0)+' mm',
+      'Cavity radii: R₁='+m.R1mm.toFixed(0)+' mm, R₂='+m.R2mm.toFixed(0)+' mm; offset X='+m.offXmm.toFixed(0)+', Y='+m.offYmm.toFixed(0)+' mm',
+      'Openings: '+openDesc,
+      'Net area: '+m.areaNet.toExponential(3)+' m² (solid: '+m.areaStem.toExponential(3)+' m²)',
+      'S hollow (D₁): '+m.S_hollow_major.toExponential(3)+' m³ | S hollow (D₂): '+m.S_hollow_minor.toExponential(3)+' m³',
+      'Remaining strength — D₁: '+m.remain_major.toFixed(1)+' % | D₂: '+m.remain_minor.toFixed(1)+' %',
+      'Worst-direction loss: '+m.lossWorst.toFixed(1)+' %'
+    ];
+
+    if(m.matOn && m.My_kNm !== null){
+      lines.push('My (hollow): '+m.My_kNm.toFixed(3)+' kN·m at σy='+m.sig.toFixed(1)+' MPa');
+    } else if(m.matOn){
+      lines.push('My not defined (check σy and geometry).');
+    } else {
+      lines.push('Material strength mode off — showing geometric capacity only.');
+    }
+
+    lines.push(
+      'Wall W: '+m.wall.tW.toFixed(1)+' mm (t/R '+m.wall.tRW.toFixed(2)+'), E: '+m.wall.tE.toFixed(1)+' mm (t/R '+m.wall.tRE.toFixed(2)+'),',
+      'Wall N: '+m.wall.tN.toFixed(1)+' mm (t/R '+m.wall.tRN.toFixed(2)+'), S: '+m.wall.tS.toFixed(1)+' mm (t/R '+m.wall.tRS.toFixed(2)+')'
+    );
+
+    for(const line of lines){
+      c2.fillText(line, 10, y);
+      y += 16;
+    }
+
+    const link = document.createElement('a');
+    link.href = oc.toDataURL('image/png');
+    link.download = 'stemz_scenario.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  
+  function saveFullAssessmentImage(){
+    if (!lastMetrics) {
+      alert('Set stem & cavity first so StemZ can calculate section modulus.');
+      return;
+    }
+    if (!lastMetrics.matOn || lastMetrics.My_kNm == null) {
+      alert('Turn ON material strength mode so Mᵧ is defined before creating the full image.');
+      return;
+    }
+    if (!windResults || !treeCanvas) {
+      alert('Wind block not initialised yet.');
+      return;
+    }
+
+    // First, refresh wind results so SF values are current
+    computeWindfirmness();
+
+    if (!lastWind) {
+      alert('Run the wind check at least once so WindZ values are available.');
+      return;
+    }
+
+    // Capture current StemZ canvas and tree preview
+    const stemCanvas = canvas;
+    const treeCan = treeCanvas;
+
+    const stemW = stemCanvas.width;
+    const stemH = stemCanvas.height;
+    const treeW = treeCan.width;
+    const treeH = treeCan.height;
+
+    const width = Math.max(stemW, treeW);
+    const extraH = 260;
+    const totalH = stemH + treeH + extraH;
+
+    const out = document.createElement('canvas');
+    out.width = width;
+    out.height = totalH;
+    const g = out.getContext('2d');
+
+    // Background
+    g.fillStyle = '#020d0d';
+    g.fillRect(0,0,width,totalH);
+
+    // Draw titles
+    g.fillStyle = '#e6efde';
+    g.font = '14px system-ui';
+    g.fillText('StemZ + WindZ static assessment snapshot', 10, 20);
+
+    // Draw StemZ canvas at top
+    g.drawImage(stemCanvas, 0, 30);
+
+    // Draw WindZ tree graphic under it
+    const yTree = 40 + stemH;
+    g.drawImage(treeCan, 0, yTree);
+
+    // Text block under graphics
+    const m = lastMetrics;
+    g.fillStyle = '#e6efde';
+    g.font = '12px system-ui';
+    let y = yTree + treeH + 20;
+
+    const worstRemain = Math.min(m.remain_major, m.remain_minor);
+    const openDesc = m.openingsCount===0 ? 'closed' :
+                     (m.openingsCount===1 ? '1 opening' : m.openingsCount + ' openings');
+
+    function line(txt){
+      g.fillText(txt, 10, y);
+      y += 16;
+    }
+
+    line('StemZ (cross-section):');
+    line('  Stem D₁=' + m.d1mm.toFixed(0) + ' mm, D₂=' + m.d2mm.toFixed(0) + ' mm; cavity R₁=' +
+         m.R1mm.toFixed(0) + ' mm, R₂=' + m.R2mm.toFixed(0) + ' mm; openings: ' + openDesc + '.');
+    line('  Remaining bending capacity (hollow vs solid): D₁ ' +
+         m.remain_major.toFixed(1) + '%; D₂ ' + m.remain_minor.toFixed(1) + '%.');
+    line('  Worst-direction loss ≈ ' + m.lossWorst.toFixed(1) + '%.');
+
+    // Wind-side: use the last computed WindZ diagnostics
+    if (!lastWind) {
+      y += 4;
+      line('WindZ (static wind & anchorage model):');
+      line('  Wind side has not been run yet in this session.');
+    } else {
+      const w = lastWind;
+      y += 4;
+      line('WindZ (static wind & anchorage model):');
+      line('  SF_stem≈' + w.SF_stem.toFixed(2) + ', SF_root≈' + w.SF_root.toFixed(2) +
+           ', overall SF≈' + w.SF_control.toFixed(2) + '.');
+      line('  Governing structural response: ' + w.governingMode + '.');
+      if (w.v10_crit_stem && w.v10_crit_root) {
+        line('  Estimated critical 10 m reference winds for SF≈1.0: stem ≈ ' +
+             w.v10_crit_stem.toFixed(1) + ' m/s; anchorage ≈ ' +
+             w.v10_crit_root.toFixed(1) + ' m/s (gust at crown ≈ ' +
+             w.v_gust_crit_root.toFixed(1) + ' m/s).');
+      }
+      line('  Inputs: H=' + w.H.toFixed(1) + ' m, A_c≈' + w.Ac.toFixed(1) + ' m², z_e≈' +
+           w.ze.toFixed(1) + ' m, v₁₀,ref≈' + w.v10_ref.toFixed(1) + ' m/s, C_d≈' +
+           w.Cd.toFixed(2) + ', G≈' + w.G.toFixed(2) + ', k_root≈' +
+           w.kRoot.toFixed(2) + '.');
+    }
+
+    y += 8;
+    g.font = '11px system-ui';
+    g.fillStyle = '#9fbfb0';
+    line('Notes: geometric stem capacity is idealised and does not capture cracks, dynamic effects or species variability.');
+    line('Wind side is a static simplification based on user-entered UK-style wind parameters and crown/root assumptions.');
+    line('Use this image as structured support for professional judgement, not as a pass/fail rule.');
+
+    const link = document.createElement('a');
+    link.href = out.toDataURL('image/png');
+    link.download = 'stemz_windz_snapshot.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // --- Wind calculation with separate factors + critical speeds ---
+
+// --- Wind calculation with separate factors + critical speeds ---
+
+  function computeWindfirmness() {
+    if (!lastMetrics) {
+      alert('Set stem & cavity first so StemZ can calculate section modulus.');
+      return;
+    }
+    if (!lastMetrics.matOn || lastMetrics.My_kNm == null) {
+      alert('Turn ON material strength mode and ensure Mᵧ is defined (σᵧ > 0).');
+      return;
+    }
+
+    const H       = parseFloat(windH.value)      || 0;
+    const Wc      = parseFloat(windCrownW.value) || 0;
+    const Dc      = parseFloat(windCrownD.value) || 0;
+    const kCrown  = parseFloat(windCrownDensity.value) || 0;
+    const Ac      = parseFloat(windAc.value)     || 0;
+    const ze      = parseFloat(windZe.value)     || 0;
+    const v10_ref = parseFloat(windV10.value)    || 0;
+    const cz      = parseFloat(windCz.value)     || 0;
+    const G       = parseFloat(windG.value)      || 0;
+    const Cd      = parseFloat(windCd.value)     || 0;
+    const rho     = parseFloat(windRho.value)    || 0;
+    const gammaW  = parseFloat(windGammaW.value) || 1;
+    const kRoot   = parseFloat(windRootCond.value) || 1;
+    const SFtarget= parseFloat(windSFtarget.value) || 1.0;
+
+    if (Ac <= 0 || ze <= 0 || v10_ref <= 0 || cz <= 0 || G <= 0 || Cd <= 0 || rho <= 0) {
+      alert('Enter positive values for A₍c₎, zₑ, v₁₀,ref, cᶻ, G, Cᵈ and ρ.');
+      return;
+    }
+
+    // 1) Wind speed at tree top & gust for the given design wind
+    const v_tree = v10_ref * cz;
+    const v_gust = G * v_tree;
+
+    // 2) Wind force on crown (N) then kN
+    const F_wind_N  = 0.5 * rho * Cd * Ac * Math.pow(v_gust, 2);
+    const F_wind_kN = F_wind_N / 1000.0;
+
+    // 3) Overturning moment at base
+    const M_wind_nominal = F_wind_kN * ze;      // kNm
+    const M_wind_Ed      = gammaW * M_wind_nominal;
+
+    // 4) Resistance from StemZ (weaker direction)
+    const M_Rd_stem = lastMetrics.My_kNm;       // kNm (no root factor)
+    const M_Rd_root = M_Rd_stem * kRoot;        // reduced for anchorage
+    const M_Rd_ctrl = Math.min(M_Rd_stem, M_Rd_root); // governing resistance
+
+    const SF_stem      = M_Rd_stem / M_wind_Ed;
+    const SF_root      = M_Rd_root / M_wind_Ed;
+    const SF_control   = Math.min(SF_stem, SF_root);
+    const utilisation  = M_wind_Ed / M_Rd_ctrl;
+
+    const passes       = SF_control >= SFtarget;
+    const governingMode =
+      (Math.abs(SF_stem - SF_root) < 0.1*SF_control)
+        ? 'Similar influence (stem and anchorage both important)'
+        : (SF_stem < SF_root ? 'Stem strength (bending) is limiting' : 'Anchorage / roots (windfirmness) are limiting');
+
+    // 5) Critical 10 m wind speeds for SF≈1.0
+    // M_wind_Ed = gammaW * 0.5 * rho * Cd * Ac * (G^2 * cz^2 * v10^2) * ze
+    // => v10_crit = sqrt( M_Rd / (gammaW * 0.5 * rho * Cd * Ac * G^2 * cz^2 * ze) )
+    const K = gammaW * 0.5 * rho * Cd * Ac * Math.pow(G,2) * Math.pow(cz,2) * ze / 1000.0;
+    let v10_crit_stem = null;
+    let v10_crit_root = null;
+    let v_gust_crit_root = null;
+
+    if (K > 0) {
+      v10_crit_stem = Math.sqrt(M_Rd_stem / K);
+      v10_crit_root = Math.sqrt(M_Rd_root / K);
+      v_gust_crit_root = v10_crit_root * cz * G;
+    }
+
+    // Store latest wind-side diagnostics for reporting / PNG export
+    lastWind = {
+      H,
+      Wc,
+      Dc,
+      kCrown,
+      Ac,
+      ze,
+      v10_ref,
+      cz,
+      G,
+      Cd,
+      rho,
+      gammaW,
+      kRoot,
+      SFtarget,
+      F_wind_kN,
+      M_wind_Ed,
+      M_Rd_stem,
+      M_Rd_root,
+      SF_stem,
+      SF_root,
+      SF_control,
+      utilisation,
+      passes,
+      governingMode,
+      v10_crit_stem,
+      v10_crit_root,
+      v_gust_crit_root
+    };
+
+    const statusBadge = `<span class="badge ${passes ? 'badge-pass' : 'badge-fail'}">
+      ${passes ? 'PASS (overall windfirmness)' : 'LOW windfirmness vs target'}
+    </span>`;
+
+    windResults.innerHTML = `
+      <div>
+        <div>Tree height H ≈ <strong>${H.toFixed(1)}</strong> m, crown ≈ <strong>${Wc.toFixed(1)}×${Dc.toFixed(1)}</strong> m, k<sub>crown</sub>=${kCrown.toFixed(2)}</div>
+        <div>Projected crown area A<sub>c</sub> ≈ <strong>${Ac.toFixed(1)}</strong> m², effective height z<sub>e</sub> ≈ <strong>${ze.toFixed(1)}</strong> m</div>
+        <div>Wind moment (design) M<sub>wind,Ed</sub> ≈ <strong>${M_wind_Ed.toFixed(1)}</strong> kN·m</div>
+        <div>Stem bending capacity M<sub>Rd,stem</sub> (from StemZ, weaker direction) ≈ <strong>${M_Rd_stem.toFixed(1)}</strong> kN·m</div>
+        <div>Root factor k<sub>root</sub> = ${kRoot.toFixed(2)} → anchorage-limited M<sub>Rd,root</sub> ≈ <strong>${M_Rd_root.toFixed(1)}</strong> kN·m</div>
+        <div style="margin-top:4px;">
+          Stem strength factor (bending) SF<sub>stem</sub> = M<sub>Rd,stem</sub> / M<sub>wind,Ed</sub> = <strong>${SF_stem.toFixed(2)}</strong><br/>
+          Anchorage / windfirmness factor SF<sub>root</sub> = M<sub>Rd,root</sub> / M<sub>wind,Ed</sub> = <strong>${SF_root.toFixed(2)}</strong>
+        </div>
+        <div style="margin-top:4px;">
+          Current limiting factor: <strong>${governingMode}</strong><br/>
+          Overall windfirmness factor (controlling SF) = <strong>${SF_control.toFixed(2)}</strong> ${statusBadge}<br/>
+          Utilisation = M<sub>wind,Ed</sub> / M<sub>Rd,control</sub> = <strong>${utilisation.toFixed(2)}</strong>, target SF<sub>target</sub> = ${SFtarget.toFixed(2)}
+        </div>
+        ${v10_crit_root && v10_crit_stem ? `
+          <div style="margin-top:4px;">
+            Estimated critical 10 m reference winds for SF≈1.0 (static model):<br/>
+            • For <strong>stem strength only</strong>: v₁₀,crit,stem ≈ <strong>${v10_crit_stem.toFixed(1)}</strong> m/s<br/>
+            • For <strong>anchorage / windfirmness</strong>: v₁₀,crit,root ≈ <strong>${v10_crit_root.toFixed(1)}</strong> m/s
+              (peak gust at crown ≈ <strong>${v_gust_crit_root.toFixed(1)}</strong> m/s)
+          </div>
+        ` : ''}
+      </div>
+    `;
+
+    drawTreePreview();
+  }
+
+  // --- Tree preview graphic ---
+
+  function drawTreePreview() {
+    const w = treeCanvas.width;
+    const h = treeCanvas.height;
+    treeCtx.clearRect(0,0,w,h);
+
+    treeCtx.fillStyle = '#020d0d';
+    treeCtx.fillRect(0,0,w,h);
+
+    const H = parseFloat(windH.value) || 0;
+    const Hb = parseFloat(windCrownBase.value) || 0;
+    const Wc = parseFloat(windCrownW.value) || 0;
+    const Dc = parseFloat(windCrownD.value) || 0;
+    const kCr = parseFloat(windCrownDensity.value) || 0.8;
+    const rootK = parseFloat(windRootCond.value) || 1;
+
+    const groundY = h - 30;
+
+    // ground colour based on roots
+    let groundColor;
+    if (rootK >= 0.9)      groundColor = '#064e3b';
+    else if (rootK >= 0.6) groundColor = '#854d0e';
+    else                   groundColor = '#7f1d1d';
+
+    treeCtx.fillStyle = groundColor;
+    treeCtx.fillRect(0, groundY, w, h-groundY);
+
+    treeCtx.fillStyle = '#e6efde';
+    treeCtx.font = '10px system-ui';
+    treeCtx.fillText('Root condition', 8, groundY+12);
+
+    if (H <= 0) return;
+
+    const verticalSpace = groundY - 20;
+    const scale = verticalSpace / (H * 1.1);
+
+    const centerX = w * 0.5;
+
+    const Hb_clamped = (Hb >= 0 && Hb < H) ? Hb : Math.max(0, H - Dc);
+    const crownTop   = H;
+    const crownBase  = Hb_clamped;
+
+    const crownTopY    = groundY - crownTop * scale;
+    const crownBottomY = groundY - crownBase * scale;
+
+    const trunkTopY    = crownBottomY;
+    const trunkBottomY = groundY;
+    const trunkHeight  = trunkBottomY - trunkTopY;
+
+    const crownDepthPx = crownBottomY - crownTopY;
+    const crownWidthPx = Math.min(w*0.7, Math.max(20, Wc * scale));
+    const trunkWidth   = Math.max(6, Math.min(30, crownWidthPx * 0.25));
+
+    // trunk
+    treeCtx.fillStyle = '#4b3a2b';
+    treeCtx.beginPath();
+    if (typeof treeCtx.roundRect === 'function') {
+      treeCtx.roundRect(
+        centerX - trunkWidth / 2,
+        trunkTopY,
+        trunkWidth,
+        trunkHeight,
+        6
+      );
+    } else {
+      treeCtx.rect(
+        centerX - trunkWidth / 2,
+        trunkTopY,
+        trunkWidth,
+        trunkHeight
+      );
+    }
+    treeCtx.fill();
+
+    // crown colour vs density
+    let crownColor;
+    if (kCr >= 0.95)      crownColor = '#14532d';
+    else if (kCr >= 0.75) crownColor = '#166534';
+    else                  crownColor = '#15803d';
+
+    const crownLeftX  = centerX - crownWidthPx/2;
+    const crownRightX = centerX + crownWidthPx/2;
+
+    treeCtx.fillStyle = crownColor;
+    treeCtx.beginPath();
+    treeCtx.moveTo(crownLeftX, (crownTopY + crownBottomY)/2);
+    treeCtx.bezierCurveTo(
+      crownLeftX, crownTopY,
+      centerX - crownWidthPx*0.25, crownTopY - crownDepthPx*0.1,
+      centerX, crownTopY
+    );
+    treeCtx.bezierCurveTo(
+      centerX + crownWidthPx*0.25, crownTopY - crownDepthPx*0.1,
+      crownRightX, crownTopY,
+      crownRightX, (crownTopY + crownBottomY)/2
+    );
+    treeCtx.bezierCurveTo(
+      crownRightX, crownBottomY,
+      centerX + crownWidthPx*0.25, crownBottomY + crownDepthPx*0.1,
+      centerX, crownBottomY
+    );
+    treeCtx.bezierCurveTo(
+      centerX - crownWidthPx*0.25, crownBottomY + crownDepthPx*0.1,
+      crownLeftX, crownBottomY,
+      crownLeftX, (crownTopY + crownBottomY)/2
+    );
+    treeCtx.closePath();
+    treeCtx.fill();
+
+    treeCtx.strokeStyle = 'rgba(230,239,222,0.45)';
+    treeCtx.lineWidth = 1;
+    treeCtx.stroke();
+
+    // total height arrow
+    treeCtx.strokeStyle = '#e6efde';
+    treeCtx.lineWidth = 1;
+    const arrowX = w*0.1;
+    const topY = crownTopY;
+    treeCtx.beginPath();
+    treeCtx.moveTo(arrowX, topY);
+    treeCtx.lineTo(arrowX, groundY);
+    treeCtx.stroke();
+    // arrow heads
+    treeCtx.beginPath();
+    treeCtx.moveTo(arrowX, topY);
+    treeCtx.lineTo(arrowX-4, topY+8);
+    treeCtx.lineTo(arrowX+4, topY+8);
+    treeCtx.closePath();
+    treeCtx.fillStyle = '#e6efde';
+    treeCtx.fill();
+
+    treeCtx.beginPath();
+    treeCtx.moveTo(arrowX, groundY);
+    treeCtx.lineTo(arrowX-4, groundY-8);
+    treeCtx.lineTo(arrowX+4, groundY-8);
+    treeCtx.closePath();
+    treeCtx.fill();
+
+    treeCtx.font = '10px system-ui';
+    treeCtx.fillText('H ≈ '+H.toFixed(1)+' m', arrowX+4, (topY+groundY)/2);
+
+    // crown base marker
+    const baseY = crownBottomY;
+    treeCtx.strokeStyle = '#9fbfb0';
+    treeCtx.beginPath();
+    treeCtx.moveTo(centerX - crownWidthPx/2, baseY);
+    treeCtx.lineTo(centerX + crownWidthPx/2, baseY);
+    treeCtx.stroke();
+    treeCtx.fillStyle = '#9fbfb0';
+    treeCtx.fillText('Base ≈ '+Hb_clamped.toFixed(1)+' m', centerX - 35, baseY - 4);
+
+    // crown width indicator
+    const cwY = crownTopY - 10;
+    treeCtx.beginPath();
+    treeCtx.moveTo(crownLeftX, cwY);
+    treeCtx.lineTo(crownRightX, cwY);
+    treeCtx.stroke();
+    treeCtx.beginPath();
+    treeCtx.moveTo(crownLeftX, cwY);
+    treeCtx.lineTo(crownLeftX+6, cwY-4);
+    treeCtx.lineTo(crownLeftX+6, cwY+4);
+    treeCtx.closePath();
+    treeCtx.fillStyle = '#9fbfb0';
+    treeCtx.fill();
+    treeCtx.beginPath();
+    treeCtx.moveTo(crownRightX, cwY);
+    treeCtx.lineTo(crownRightX-6, cwY-4);
+    treeCtx.lineTo(crownRightX-6, cwY+4);
+    treeCtx.closePath();
+    treeCtx.fill();
+
+    treeCtx.fillText('W ≈ '+Wc.toFixed(1)+' m', centerX - 30, cwY - 4);
+
+    // crown depth label
+    treeCtx.beginPath();
+    const cdX = w*0.88;
+    const crownMidY = (crownTopY + crownBottomY)/2;
+    treeCtx.moveTo(cdX, crownTopY);
+    treeCtx.lineTo(cdX, crownBottomY);
+    treeCtx.stroke();
+    treeCtx.beginPath();
+    treeCtx.moveTo(cdX, crownTopY);
+    treeCtx.lineTo(cdX-4, crownTopY+8);
+    treeCtx.lineTo(cdX+4, crownTopY+8);
+    treeCtx.closePath();
+    treeCtx.fillStyle = '#9fbfb0';
+    treeCtx.fill();
+    treeCtx.beginPath();
+    treeCtx.moveTo(cdX, crownBottomY);
+    treeCtx.lineTo(cdX-4, crownBottomY-8);
+    treeCtx.lineTo(cdX+4, crownBottomY-8);
+    treeCtx.closePath();
+    treeCtx.fill();
+
+    treeCtx.fillText('D ≈ '+Dc.toFixed(1)+' m', cdX-30, crownMidY);
+  }
+
+  // --- UK wind presets ---
+
+  function applyWindPreset() {
+    const v = windPreset.value;
+    if (!v) {
+      windPresetInfo.textContent = 'No preset selected — set v₁₀,ref and cᶻ manually from UK NA maps or a wind calculator.';
+      return;
+    }
+
+    switch (v) {
+      case 'uk_london_south':
+        windV10.value = 22;
+        windCz.value  = 0.95;
+        windPresetInfo.textContent =
+          'SE England / London (example): relatively low basic wind speed, urban/suburban roughness. ' +
+          'Refine using the UK NA wind map (BS EN 1991-1-4) or a UK wind calculator for your exact location.';
+        break;
+
+      case 'uk_england_inland':
+        windV10.value = 24;
+        windCz.value  = 1.00;
+        windPresetInfo.textContent =
+          'England & Wales inland lowland (example): typical vb,map around 23–25 m/s. ' +
+          'Check UK NA Figure NA.1 or national wind maps for project work.';
+        break;
+
+      case 'uk_england_coastal':
+        windV10.value = 26;
+        windCz.value  = 1.05;
+        windPresetInfo.textContent =
+          'England & Wales coastal/headlands (example): higher wind zone along coasts. ' +
+          'Use UK NA wind map and include distance from shoreline if doing full EN 1991-1-4.';
+        break;
+
+      case 'uk_scotland_inland':
+        windV10.value = 26;
+        windCz.value  = 1.00;
+        windPresetInfo.textContent =
+          'Scotland inland (example): generally higher basic wind speed than southern England. ' +
+          'Confirm with UK NA Figure NA.1 or a UK wind calculator.';
+        break;
+
+      case 'uk_scotland_coastal':
+        windV10.value = 28;
+        windCz.value  = 1.10;
+        windPresetInfo.textContent =
+          'Scotland & N. Ireland coastal / very exposed (example): upper UK vb,map band, e.g. NW Scotland and very exposed coasts. ' +
+          'Always confirm from the UK NA wind map.';
+        break;
+
+      default:
+        windPresetInfo.textContent =
+          'Preset not recognised — set v₁₀,ref and cᶻ manually.';
+    }
+
+    drawTreePreview();
+  }
+
+  // --- Event wiring ---
+
+  'touchstart touchmove input change'.split(' ').forEach(evt=>{
+    stemD1_range.addEventListener(evt, syncFromSliders, {passive:true});
+    stemD2_range.addEventListener(evt, syncFromSliders, {passive:true});
+    cavR1_range.addEventListener(evt, syncFromSliders, {passive:true});
+    cavR2_range.addEventListener(evt, syncFromSliders, {passive:true});
+    offX_range.addEventListener(evt, syncFromSliders, {passive:true});
+    offY_range.addEventListener(evt, syncFromSliders, {passive:true});
+    open1_depth_range.addEventListener(evt, syncFromSliders, {passive:true});
+    open1_half_range.addEventListener(evt, syncFromSliders, {passive:true});
+    open2_depth_range.addEventListener(evt, syncFromSliders, {passive:true});
+    open2_half_range.addEventListener(evt, syncFromSliders, {passive:true});
+  });
+
+  
+  // --- Input handling (mobile-friendly) ---
+  // Allow users to clear and type numbers without immediate clamping snapping back to the minimum.
+  function stemLiveUpdate(){
+    if(stemD1.value.trim() !== ''){
+      const v = parseFloat(stemD1.value);
+      if(isFinite(v)) stemD1_range.value = clamp(v, parseFloat(stemD1_range.min), parseFloat(stemD1_range.max));
+    }
+    if(stemD2.value.trim() !== ''){
+      const v = parseFloat(stemD2.value);
+      if(isFinite(v)) stemD2_range.value = clamp(v, parseFloat(stemD2_range.min), parseFloat(stemD2_range.max));
+    }
+    // live update without forcing formatting while typing
+    updateAll();
+  }
+
+  function stemCommitUpdate(){
+    // On commit (change/blur), clamp + sync all derived ranges (radii limits, offsets etc.)
+    if(stemD1.value.trim() === '') stemD1.value = stemD1_range.min;
+    if(stemD2.value.trim() === '') stemD2.value = stemD2_range.min;
+    syncFromInputs();
+  }
+
+  stemD1.addEventListener('input', stemLiveUpdate);
+  stemD2.addEventListener('input', stemLiveUpdate);
+  stemD1.addEventListener('change', stemCommitUpdate);
+  stemD2.addEventListener('change', stemCommitUpdate);
+  stemD1.addEventListener('blur', stemCommitUpdate);
+  stemD2.addEventListener('blur', stemCommitUpdate);
+
+  // All other numeric inputs can safely clamp on input/change
+  ['input','change'].forEach(evt=>{
+    cavR1.addEventListener(evt, syncFromInputs);
+    cavR2.addEventListener(evt, syncFromInputs);
+    offX.addEventListener(evt, syncFromInputs);
+    offY.addEventListener(evt, syncFromInputs);
+    open1_depth.addEventListener(evt, syncFromInputs);
+    open1_half.addEventListener(evt, syncFromInputs);
+    open2_depth.addEventListener(evt, syncFromInputs);
+    open2_half.addEventListener(evt, syncFromInputs);
+    open1_side.addEventListener(evt, updateAll);
+    open2_side.addEventListener(evt, updateAll);
+    sigmaY.addEventListener(evt, updateAll);
+  });
+resetBtn.addEventListener('click', e=>{
+    e.preventDefault();
+    stemD1_range.value = 1000;
+    stemD2_range.value = 1000;
+    cavR1_range.value  = 250;
+    cavR2_range.value  = 250;
+    offX_range.value   = 0;
+    offY_range.value   = 0;
+    stemD1.value = '1000';
+    stemD2.value = '1000';
+    cavR1.value = '250';
+    cavR2.value = '250';
+    offX.value = '0';
+    offY.value = '0';
+    openingsCount.value = '0';
+    updateOpeningVisibility();
+    matMode.checked = true;
+    speciesSel.value = 'generic';
+    sigmaY.value = '40';
+
+    // Wind defaults
+    windPreset.value = '';
+    windPresetInfo.textContent = 'Choose a preset as a starting point then tweak v₁₀,ref / cᶻ manually.';
+    windH.value = 20;
+    windCrownBase.value = 6;
+    windCrownW.value = 8;
+    windCrownD.value = 10;
+    windCrownDensity.value = '0.8';
+    autoUpdateCrownAreaFromInputs();
+    windZeAuto.checked = true;
+    autoUpdateZe(true);
+    windV10.value = 25;
+    windCz.value = 1.10;
+    windG.value = 1.4;
+    windCd.value = 0.5;
+    windRho.value = 1.25;
+    windGammaW.value = 1.5;
+    windRootCond.value = '1.0';
+    windSFtarget.value = 1.5;
+    windResults.innerHTML = '';
+
+    syncDerivedAndUpdate();
+    updateMaterialVisibility();
+    drawTreePreview();
+  });
+
+  saveImageBtn.addEventListener('click', e=>{
+    e.preventDefault();
+    saveScenarioImage();
+  });
+
+  if (saveFullImageBtn) {
+    saveFullImageBtn.addEventListener('click', e=>{
+      e.preventDefault();
+      saveFullAssessmentImage();
+    });
+  }
+
+  windCalcBtn.addEventListener('click', e=>{
+    e.preventDefault();
+    computeWindfirmness();
+  });
+
+  // initial
+  updateOpeningVisibility();
+  updateMaterialVisibility();
+  applySpeciesSigma();
+  syncDerivedAndUpdate();
+  autoUpdateCrownAreaFromInputs();
+  windZeAuto.checked = true;
+  autoUpdateZe(true);
+  drawTreePreview();
+</script>
+<script>
+  // PWA: register service worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    });
+  }
+</script>
+
+</body>
+</html>
